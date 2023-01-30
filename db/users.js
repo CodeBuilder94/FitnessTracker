@@ -44,10 +44,10 @@ try{
 const {rows:[user]} = await client.query(`
 SELECT username
 FROM users
-WHERE username = ${userName}; 
+WHERE username = '${userName}'; 
 `)
-console.log(user)
-return rows;
+console.log(user.username);
+return user.username;
 }catch(error){
   throw error
 }
