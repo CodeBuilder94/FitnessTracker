@@ -1,3 +1,4 @@
+const { de } = require('faker/lib/locales');
 const client = require('./client');
 
 // database functions
@@ -38,7 +39,7 @@ async function getActivityById(id) {
   FROM activities
   WHERE id = '${id}'
 ;`)
-  console.log("gotten activities" + activity);
+  
   return activity;
 
  }catch(error)
@@ -64,7 +65,21 @@ async function attachActivitiesToRoutines(routines) {
   // select and return an array of all activities
 }
 
-async function updateActivity({ id, ...fields }) {
+async function updateActivity({ id, name, description }) {
+
+  try{
+    if(name){
+const result = await client.query(`
+UPDATE activities
+SET "name" = '$${name}' 
+WHERE id = '${id}'
+RETURNING *
+;` [name])
+console.log (result)}
+return result
+  }catch (error){
+    throw error
+  }
   // don't try to update the id
   // do update the name and description
   // return the updated activity
