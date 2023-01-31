@@ -17,9 +17,35 @@ throw error
 
 async function getAllActivities() {
   // select and return an array of all activities
+  try{
+    const {rows} = await client.query(`
+    SELECT *
+    FROM activities
+    ;`)
+
+    return rows;
+
+  }catch(error)
+  {
+    throw error;
+  }
 }
 
-async function getActivityById(id) {}
+async function getActivityById(id) {
+ try{
+  const {rows:[activity]} = await client.query(`
+  SELECT *
+  FROM activities
+  WHERE id = '${id}'
+;`)
+  console.log("gotten activities" + activity);
+  return activity;
+
+ }catch(error)
+ {
+  throw error;
+ }
+}
 
 async function getActivityByName(name) {}
 
