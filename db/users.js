@@ -49,7 +49,19 @@ if(passwordCheck)
 }
 
 async function getUserById(userId) {
+try{
+const {rows: [user]} = await client.query(`
+SELECT *
+FROM users
+WHERE id = '${userId}'
+;`)
 
+delete user.password
+
+return user
+}catch(error){
+throw error
+}
 }
 
 async function getUserByUsername(userName) {

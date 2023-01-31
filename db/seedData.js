@@ -1,5 +1,5 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const {createUser, getUser, getUserByUsername } = require('./');
+const {createUser, getUser, getUserByUsername, getUserById } = require('./');
 const client = require("./client")
 
 async function dropTables() {
