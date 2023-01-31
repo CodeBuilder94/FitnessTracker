@@ -67,16 +67,19 @@ async function attachActivitiesToRoutines(routines) {
 
 async function updateActivity({ id, name, description }) {
 
-  try{
-    if(name){
-const result = await client.query(`
-UPDATE activities
-SET "name" = '$${name}' 
-WHERE id = '${id}'
-RETURNING *
-;` [name])
-console.log (result)}
-return result
+ try{
+
+  const result = await client.query(`
+  UPDATE activities
+  SET "name" = '$${name}' 
+  WHERE id = '${id}'
+  RETURNING *
+  ;`, [name])
+
+  console.log (result);
+  return result;
+
+
   }catch (error){
     throw error
   }
