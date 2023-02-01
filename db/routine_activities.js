@@ -55,21 +55,33 @@ async function getRoutineActivitiesByRoutine({ id }) {
 async function updateRoutineActivity({ id, ...fields }) {
   const setString = Object.keys(fields).map((key, index) => {
     return `${key} = $${index + 1}` 
-  }) .join(', ')
-}
-try{
-const {rows: [routineActivities]} = await client.query(`
-UPDATE routineActivities
-SET ${setString} 
-WHERE id = ${id}
-RETURNING *
-;`, Object.keys(fields))
-return routineActivities;
-}catch (error){
-  throw error
+  }).join(', ')
+ 
+  try{
+    const {rows: [routineActivities]} = await client.query(`
+    UPDATE routine_activities
+    SET ${setString} 
+    WHERE id = ${id}
+    RETURNING *
+    ;`, Object.values(fields))
+   
+    return routineActivities;
+    }catch (error){
+      throw error
+    }
 }
 
-async function destroyRoutineActivity(id) {}
+
+async function destroyRoutineActivity(id) {
+  try{
+    await client.query (`
+    DELETE FROM routine_activities
+    WHERE id = $1 
+    ;`, [id])
+  }catch (error) {
+    throw error
+  }
+}
 
 async function canEditRoutineActivity(routineActivityId, userId) {}
 
