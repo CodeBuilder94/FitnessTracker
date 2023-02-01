@@ -49,9 +49,9 @@ async function getRoutinesWithoutActivities() {
 async function getAllRoutines() {
  try{
     const {rows:[routine] }= await client.query(`
-      SELECT *
+      SELECT 
+      DISTINCT *
       FROM routines
-      JOIN 
     ;`)
 
     console.log(routine);
@@ -71,7 +71,31 @@ async function getPublicRoutinesByUser({ username }) {}
 
 async function getPublicRoutinesByActivity({ id }) {}
 
-async function updateRoutine({ id, ...fields }) {}
+async function updateRoutine({ id, ...fields }) {
+
+  const setString = Object.keys(fields).map((key,idx) =>{
+    return `"${key}" = $${idx +1}`
+  }).join(', ');
+  
+  try{
+    if(setString.length >0)
+  {
+    const {rows:[routine]} = await client.query(`
+      UPDATE routines
+      SET ${setString}
+      WHERE id = ${id}
+      RETURNING *
+    ;`,Object.values(fields))
+    
+    return routine;
+  }
+    return;
+  }catch(error)
+  {
+    throw error;
+  }
+
+}
 
 async function destroyRoutine(id) {}
 
