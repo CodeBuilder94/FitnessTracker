@@ -74,7 +74,7 @@ async function updateActivity({ id, name, description }) {
   SET "name" = '$${name}' 
   WHERE id = '${id}'
   RETURNING *
-  ;`, [name])
+  ;`, [id, name])
 
   console.log (result);
   return result;

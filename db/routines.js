@@ -33,9 +33,44 @@ async function getRoutineById(id) {
   }
 }
 
-async function getRoutinesWithoutActivities() {}
+async function getRoutinesWithoutActivities() {
+  try{
+    const {rows} = await client.query(`
+      SELECT *
+      FROM routines
+    ;`)
+    return rows;
+  }catch(error)
+  {
+    throw error;
+  }
+}
 
-async function getAllRoutines() {}
+async function getAllRoutines() {
+ /* try{
+    const {rows} = await client.query(`
+      SELECT *
+      FROM routines
+    ;`)
+
+    const {rows:activities} = await client.query(`
+    SELECT *
+    FROM activities
+    ;`)
+
+  for(let i=0;i< rows.length; i++)
+  {
+    rows[i].activities = activities[i];
+  }
+
+    console.log(rows);
+    return rows;
+
+  }catch(error)
+  {
+    throw error;
+  }*/
+}
 
 async function getAllPublicRoutines() {}
 
