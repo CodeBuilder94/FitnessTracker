@@ -23,8 +23,8 @@ async function getRoutineById(id) {
     const {rows:[routine]} = await client.query(`
       SELECT *
       FROM routines
-      WHERE id = '${id}'
-    ;`)
+      WHERE id = $1
+    ;`,[id])
 
     return routine;
 
@@ -47,29 +47,20 @@ async function getRoutinesWithoutActivities() {
 }
 
 async function getAllRoutines() {
- /* try{
-    const {rows} = await client.query(`
+ try{
+    const {rows:[routine] }= await client.query(`
       SELECT *
       FROM routines
+      JOIN 
     ;`)
 
-    const {rows:activities} = await client.query(`
-    SELECT *
-    FROM activities
-    ;`)
-
-  for(let i=0;i< rows.length; i++)
-  {
-    rows[i].activities = activities[i];
-  }
-
-    console.log(rows);
-    return rows;
+    console.log(routine);
+    return routine;
 
   }catch(error)
   {
     throw error;
-  }*/
+  }
 }
 
 async function getAllPublicRoutines() {}

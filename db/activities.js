@@ -63,6 +63,34 @@ async function getActivityByName(name) {
 
 async function attachActivitiesToRoutines(routines) {
   // select and return an array of all activities
+  const routinesToReturn = [...routines];
+  const binds = routines.map((_, idx) => `$${idx+1}`).join(', ')
+  
+  const routineIds = routines.map(routine => routine.id)
+  if(!routineIds ?.length)
+  {
+    return routinesToReturn;
+  }
+  
+  console.log(routines);
+  try{
+    const {rows:[activities]} =await client.query(`
+      SELECT activities.*, routine_activities, routine_activities.count, routine_activities.id
+      AS "routineActivityId", routine_activities."routineId"
+      FROM activities
+      JOIN routine_activities ON routine_activities."activityId" = activities.id
+      WHERE routine_activities."routineId" IN (${binds})
+    ;`,routineIds)
+
+    for(const routine of routinesToReturn)
+    {
+      const activitiesToAdd = activities.filter(activity => activity.routineId === routine.id)
+      routine.activities = activitiesToAdd;
+    }
+    return routinesToReturn;
+  }catch(error){
+    throw error
+  }
 }
 
 async function updateActivity({ id, ...fields }) {
