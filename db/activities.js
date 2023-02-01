@@ -37,8 +37,8 @@ async function getActivityById(id) {
   const {rows:[activity]} = await client.query(`
   SELECT *
   FROM activities
-  WHERE id = '${id}'
-;`)
+  WHERE id = $1
+;`,[id])
   
   return activity;
 
@@ -53,8 +53,8 @@ async function getActivityByName(name) {
     const {rows:[activity]} = await client.query(`
     SELECT *
     FROM activities
-    WHERE name = '${name}'
-    ;`)
+    WHERE name = $1
+    ;`, [name])
     return activity;
   }catch(error){
     throw error
@@ -65,19 +65,26 @@ async function attachActivitiesToRoutines(routines) {
   // select and return an array of all activities
 }
 
-async function updateActivity({ id, name, description }) {
+async function updateActivity({ id, ...fields }) {
+
+
+const setString = Object.keys(fields).map((key, index) =>{
+  return `${key} = $${index +1}`
+}
+).join(', ');
+
 
  try{
 
-  const result = await client.query(`
+  const {rows:[activity]} = await client.query(`
   UPDATE activities
-  SET "name" = '$${name}' 
-  WHERE id = '${id}'
+  SET ${setString}
+  WHERE id = ${id}
   RETURNING *
-  ;`, [id, name])
+  ;`, Object.values(fields))
 
-  console.log (result);
-  return result;
+  
+  return activity;
 
 
   }catch (error){

@@ -53,8 +53,8 @@ try{
 const {rows: [user]} = await client.query(`
 SELECT *
 FROM users
-WHERE id = '${userId}'
-;`)
+WHERE id = $1
+;`[userId])
 
 delete user.password
 
@@ -69,8 +69,8 @@ try{
 const {rows:[user]} = await client.query(`
 SELECT *
 FROM users
-WHERE username = '${userName}'; 
-`)
+WHERE username = $1; 
+`,[userName])
 
 return user;
 }catch(error){
