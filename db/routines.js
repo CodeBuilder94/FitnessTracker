@@ -48,14 +48,16 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
  try{
-    const {rows:[routine] }= await client.query(`
-      SELECT 
-      DISTINCT *
+    const { rows }= await client.query(`
+      SELECT routines.*  
       FROM routines
+      JOIN routine_activities ON routines.id = routine_activities."routineId"
+      JOIN activities ON routine_activities."activityId" = activities.id
+      JOIN users ON users.id = routines."creatorId"
     ;`)
 
-    console.log(routine);
-    return routine;
+    console.log(rows);
+    return rows;
 
   }catch(error)
   {
@@ -63,7 +65,9 @@ async function getAllRoutines() {
   }
 }
 
-async function getAllPublicRoutines() {}
+async function getAllPublicRoutines() {
+
+}
 
 async function getAllRoutinesByUser({ username }) {}
 
