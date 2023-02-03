@@ -111,7 +111,7 @@ async function getAllRoutinesByUser({ username }) {
   const allRoutines = await getAllRoutines();
 
   const userRoutines = allRoutines.filter((routine) =>{
-    return routine.creatorName ? routine.creatorName === username: null;
+    return routine.creatorName ? username: null;
   })
   
   return userRoutines;
@@ -121,7 +121,7 @@ async function getPublicRoutinesByUser({ username }) {
   const allPublicRoutines = await getAllPublicRoutines();
   
   const publicUserRoutines = allPublicRoutines.filter((routine) =>{
-    return routine.creatorName ? routine.creatorName === username: null;
+    return routine.creatorName ? username: null;
   })
   
   return publicUserRoutines;
@@ -129,12 +129,15 @@ async function getPublicRoutinesByUser({ username }) {
 
 async function getPublicRoutinesByActivity({ id }) {
 const allPublicRoutines = await getAllPublicRoutines();
-console.log(allPublicRoutines);
+//console.log(allPublicRoutines);
 const publicActivityRoutines = allPublicRoutines.filter((routine) =>{
-  return routine.activities.activityId ? routine.activities.activityId === id: null;
+  
+  return routine.activities.length > 1 ? routine.activities.filter((activity) =>{
+    return activity.id ? id : null;
+  }):null
 })
 
- //console.log(publicActivityRoutines);
+  //console.log(JSON.stringify(publicActivityRoutines,null, 2));
   return publicActivityRoutines;
 
 }
