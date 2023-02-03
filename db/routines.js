@@ -49,13 +49,34 @@ async function getRoutinesWithoutActivities() {
 async function getAllRoutines() {
  try{
     const { rows }= await client.query(`
-      SELECT routines.*,duration, count, activities.id AS "activityId", activities.name AS "activityName",
+      SELECT routines.*, activities.id AS "activityId",
       description, users.username AS "creatorName"
       FROM routines
       JOIN routine_activities ON routines.id = routine_activities."routineId"
       JOIN activities ON activities.id = routine_activities."activityId"
       JOIN users ON users.id = routines."creatorId"
     ;`)
+    
+    /*const routinesNeedActivities=rows;
+
+    for(let i=0;i <rows.length; i++)
+    {
+      const routine = routinesNeedActivities[i];
+
+      const {rows:[activities]} = await client.query(`
+        SELECT activities.*, duration, count, routine_activities.id AS "routineActivityId"
+        FROM activities
+        JOIN routine_activities ON activities.id = routine_activities."activityId"
+        WHERE activities.id = $1
+      ;`,[routine.activityId])
+      
+      routine.activities = activities;
+      routine.activities.routineId = routine.id;
+      delete routine.activityId;
+    }
+
+    console.log(routinesNeedActivities);
+    return routinesNeedActivities;*/
 
     console.log(rows);
     return rows;
