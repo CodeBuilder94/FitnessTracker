@@ -59,7 +59,6 @@ async function getAllRoutines() {
     
    let routines = attachActivitiesToRoutines(rows);
    routines = Object.values(routines);
-    //console.log(routines);
     return routines;
 
   }catch(error)
@@ -93,20 +92,52 @@ const attachActivitiesToRoutines = (routines) => {
       duration: routine.duration
     };
     routinesById[routine.id].activities.push(activity);
-    console.log(activity);
+    
   });
   return routinesById;
 }
 
 async function getAllPublicRoutines() {
+  const allRoutines = await getAllRoutines();
 
+  const publicRoutines = allRoutines.filter((routine) =>{
+    return (routine.isPublic ? true: null);
+  })
+  
+  return publicRoutines;
 }
 
-async function getAllRoutinesByUser({ username }) {}
+async function getAllRoutinesByUser({ username }) {
+  const allRoutines = await getAllRoutines();
 
-async function getPublicRoutinesByUser({ username }) {}
+  const userRoutines = allRoutines.filter((routine) =>{
+    return routine.creatorName ? routine.creatorName === username: null;
+  })
+  
+  return userRoutines;
+}
 
-async function getPublicRoutinesByActivity({ id }) {}
+async function getPublicRoutinesByUser({ username }) {
+  const allPublicRoutines = await getAllPublicRoutines();
+  
+  const publicUserRoutines = allPublicRoutines.filter((routine) =>{
+    return routine.creatorName ? routine.creatorName === username: null;
+  })
+  
+  return publicUserRoutines;
+}
+
+async function getPublicRoutinesByActivity({ id }) {
+const allPublicRoutines = await getAllPublicRoutines();
+console.log(allPublicRoutines);
+const publicActivityRoutines = allPublicRoutines.filter((routine) =>{
+  return routine.activities.activityId ? routine.activities.activityId === id: null;
+})
+
+ //console.log(publicActivityRoutines);
+  return publicActivityRoutines;
+
+}
 
 async function updateRoutine({ id, ...fields }) {
 
