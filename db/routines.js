@@ -49,42 +49,53 @@ async function getRoutinesWithoutActivities() {
 async function getAllRoutines() {
  try{
     const { rows }= await client.query(`
-      SELECT routines.*, activities.id AS "activityId",
-      description, users.username AS "creatorName"
+      SELECT routines.*, count , duration, activities.name AS "activityName", 
+      activities.id AS "activityId", description, users.username AS "creatorName", routine_activities.id AS "routineActivityId"
       FROM routines
       JOIN routine_activities ON routines.id = routine_activities."routineId"
       JOIN activities ON activities.id = routine_activities."activityId"
       JOIN users ON users.id = routines."creatorId"
     ;`)
     
-    /*const routinesNeedActivities=rows;
-
-    for(let i=0;i <rows.length; i++)
-    {
-      const routine = routinesNeedActivities[i];
-
-      const {rows:[activities]} = await client.query(`
-        SELECT activities.*, duration, count, routine_activities.id AS "routineActivityId"
-        FROM activities
-        JOIN routine_activities ON activities.id = routine_activities."activityId"
-        WHERE activities.id = $1
-      ;`,[routine.activityId])
-      
-      routine.activities = activities;
-      routine.activities.routineId = routine.id;
-      delete routine.activityId;
-    }
-
-    console.log(routinesNeedActivities);
-    return routinesNeedActivities;*/
-
-    console.log(rows);
-    return rows;
+   let routines = attachActivitiesToRoutines(rows);
+   routines = Object.values(routines);
+    //console.log(routines);
+    return routines;
 
   }catch(error)
   {
     throw error;
   }
+}
+
+const attachActivitiesToRoutines = (routines) => {
+  const routinesById = {}
+  routines.forEach(routine => {
+    if(!routinesById[routine.id])
+    {
+      routinesById[routine.id] = {
+        id: routine.id,
+        creatorId: routine.creatorId,
+        creatorName: routine.creatorName,
+        isPublic: routine.isPublic,
+        name: routine.name,
+        goal: routine.goal,
+        activities:[],
+      };
+    }
+    const activity ={
+      routineId: routine.id,
+      routineActivityId: routine.routineActivityId,
+      name: routine.activityName,
+      id: routine.activityId,
+      description: routine.description,
+      count: routine.count,
+      duration: routine.duration
+    };
+    routinesById[routine.id].activities.push(activity);
+    console.log(activity);
+  });
+  return routinesById;
 }
 
 async function getAllPublicRoutines() {
