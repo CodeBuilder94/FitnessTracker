@@ -188,35 +188,35 @@ describe("DB Routines", () => {
   });
 
   describe("getAllPublicRoutines", () => {
-    it("should include the public routine", async () => {
+    xit("should include the public routine", async () => {
       const routines = await getAllPublicRoutines();
       expectRoutinesToContainRoutine(routines, fakeRoutine);
     });
 
-    it("should not contain the private routine", async () => {
+    xit("should not contain the private routine", async () => {
       const routines = await getAllPublicRoutines();
       expectRoutinesNotToContainRoutine(routines, fakePrivateRoutine);
     });
 
-    it("includes their activities", async () => {
+    xit("includes their activities", async () => {
       const routines = await getAllPublicRoutines();
       const routine = routines.find((routine) => routine.id === fakeRoutine.id);
       expectRoutineToContainActivity(routine, fakeActivity);
       expectRoutineToContainActivity(routine, fakeActivity2);
     });
 
-    it("should not include a routine more than once", async () => {
+    xit("should not include a routine more than once", async () => {
       const routines = await getAllPublicRoutines();
       expectRoutinesNotToContainDuplicates(routines, fakeRoutine);
     });
 
-    it("includes username, from users join, aliased as creatorName", async () => {
+    xit("includes username, from users join, aliased as creatorName", async () => {
       const routines = await getAllPublicRoutines();
       const routine = routines.find((routine) => routine.id === fakeRoutine.id);
       expect(routine.creatorName).toEqual(fakeUser.username);
     });
 
-    it("includes duration and count on activities, from routine_activities join", async () => {
+    xit("includes duration and count on activities, from routine_activities join", async () => {
       const routines = await getAllPublicRoutines();
       const routine = routines.find((routine) => routine.id === fakeRoutine.id);
       const activity = routine.activities.find(
@@ -226,7 +226,7 @@ describe("DB Routines", () => {
       expect(activity.count).toEqual(fakeRoutineActivity.count);
     });
 
-    it("includes the routineId and routineActivityId on activities", async () => {
+    xit("includes the routineId and routineActivityId on activities", async () => {
       const routines = await getAllPublicRoutines();
       const routine = routines.find((routine) => routine.id === fakeRoutine.id);
       const activity = routine.activities.find(

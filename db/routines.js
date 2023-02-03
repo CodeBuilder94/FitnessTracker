@@ -49,10 +49,11 @@ async function getRoutinesWithoutActivities() {
 async function getAllRoutines() {
  try{
     const { rows }= await client.query(`
-      SELECT routines.*  
+      SELECT routines.*,duration, count, activities.id AS "activityId", activities.name AS "activityName",
+      description, users.username AS "creatorName"
       FROM routines
       JOIN routine_activities ON routines.id = routine_activities."routineId"
-      JOIN activities ON routine_activities."activityId" = activities.id
+      JOIN activities ON activities.id = routine_activities."activityId"
       JOIN users ON users.id = routines."creatorId"
     ;`)
 
