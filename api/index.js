@@ -3,6 +3,7 @@ const router = express.Router();
 
 // GET /api/health
 router.get('/health', async (req, res, next) => {
+    res.send("The server is healthy");
 });
 
 // ROUTER: /api/users
@@ -19,6 +20,7 @@ router.use('/routines', routinesRouter);
 
 // ROUTER: /api/routine_activities
 const routineActivitiesRouter = require('./routineActivities');
+const { setRandomFallback } = require('bcryptjs');
 router.use('/routine_activities', routineActivitiesRouter);
 
 module.exports = router;
