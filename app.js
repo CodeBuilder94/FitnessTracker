@@ -9,12 +9,8 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-//const apiRouter = express.Router();
-
-/*app.use('/api',(req, res, next) =>
-{
-    console.log("test");
-})*/
+const apiRouter = require('./api');
+app.use('/api', apiRouter)
 
 
 module.exports = app;
