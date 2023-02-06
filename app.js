@@ -12,5 +12,4 @@ app.use(express.json());
 const apiRouter = require('./api');
 app.use('/api', apiRouter);
 
-
 module.exports = app;

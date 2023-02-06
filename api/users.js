@@ -1,15 +1,17 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
+require("dotenv").config();
 const { getUserByUsername, createUser } = require("../db");
 const router = express.Router();
-const bcrypt = require("bcryptjs")
+const jwt = require('jsonwebtoken');
+const bcrypt =require('bcryptjs');
 const SALT_COUNT = 10;
 
 
 // POST /api/users/register
 router.post("/users/register", async(req, res, next) =>{
     const {username, password} = req.body;
-    
+    console.log("register the user");
     try{
         const _user = await getUserByUsername(username);
 
