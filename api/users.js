@@ -3,56 +3,84 @@ const express = require("express");
 require("dotenv").config();
 const { getUserByUsername, createUser } = require("../db");
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const bcrypt =require('bcryptjs');
-const SALT_COUNT = 10;
 
+const jwt = require('jsonwebtoken');
+const {JWT_SECRET} = process.env;
 
 // POST /api/users/register
-router.post("/users/register", async(req, res, next) =>{
+router.post("/register", async(req, res, next) =>{
     const {username, password} = req.body;
-    console.log("register the user");
+
     try{
         const _user = await getUserByUsername(username);
-
+        
         if(_user)
         {
             next({
                 name:'UserExistsError',
-                message:"This username already exists"
+                message:"This username already exists",
+                error:"UserExistsError"
+                
             });
         }
-
+        
         if(password.length < 8)
         {
             next({
+                
                 name:'PasswordLengthError',
-                message:"The password needs to be 8 characters or longer."
+                message:"Password Too Short!"
             })
         }
 
-        //hash the password
-        const hashedPassword =  bcrypt.hashSync(password, SALT_COUNT);
-
-        const user = await createUser({username, hashedPassword});
         
-        const token = {id:user.id, username};
+        const user = await createUser({username, password});
+        
+
+        const token = jwt.sign({
+            id: user.id,
+            username: user.username
+        }, process.env.JWT_SECRET,{
+            expiresIn: '1w'
+        });
+
 
         res.send({
-            message:"You're all signed up get training!",
-            token
+            message:"You're all signed up, get training!",
+            token: token,
+            user: user
         });
+
+    }catch({error, name, message})
+    {
+        
+        next({error, name, message});
+    }
+    
+} )
+// POST /api/users/login
+router.post('/login', async (req, res, next) =>{
+    const {username, password} = req.body;
+
+    try{
+        const user = await getUserByUsername(username);
+
+        console.log(user);
 
     }catch({name, message})
     {
         next({name, message});
     }
-    
-} )
-// POST /api/users/login
+})
 
 // GET /api/users/me
+router.get('/me',(req, res, next) =>{
+
+})
 
 // GET /api/users/:username/routines
+router.get('/:username/routines', (req, res, next) =>{
+
+})
 
 module.exports = router;
