@@ -21,14 +21,24 @@ router.post("/users/register", async(req, res, next) =>{
             });
         }
 
-        //has the password
+        if(password.length < 8)
+        {
+            next({
+                name:'PasswordLengthError',
+                message:"The password needs to be 8 characters or longer."
+            })
+        }
+
+        //hash the password
         const hashedPassword =  bcrypt.hashSync(password, SALT_COUNT);
 
         const user = await createUser({username, hashedPassword});
         
+        const token = {id:user.id, username};
+
         res.send({
             message:"You're all signed up get training!",
-
+            token
         });
 
     }catch({name, message})
