@@ -11,6 +11,7 @@ router.get('/:activityId/routines', async(req, res, next) =>
 
     try{
         res.send(routines);
+        //need to finish the error handeling.
     }catch(error)
     {
         next(error);
