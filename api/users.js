@@ -1,10 +1,13 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
 require("dotenv").config();
-const { getUserByUsername, createUser } = require("../db");
+const bcrypt = require('bcryptjs')
+const SALT_COUNT = 10
+const { getUserByUsername, createUser, getUserById } = require("../db");
 const router = express.Router();
 
 const jwt = require('jsonwebtoken');
+const { off } = require("../app");
 const {JWT_SECRET} = process.env;
 
 // POST /api/users/register
@@ -60,21 +63,38 @@ router.post("/register", async(req, res, next) =>{
 // POST /api/users/login
 router.post('/login', async (req, res, next) =>{
     const {username, password} = req.body;
-    const prefix = 'Bearer ';
+   const prefix = 'Bearer ';
+   const auth = req.header('Authorization');
+    //console.log(req.header('Authorization'))
+  /*if(!auth) {
+    next()
+  }
+  else if(auth.startsWith(prefix)){
+     const token = auth.slice(prefix.length);
+     console.log(token)
+        try{
+            const user = await getUserByUsername(username);
+            const hashedPassword = bcrypt.hashSync(password, SALT_COUNT);
+            const vPassword = jwt.verify(token, JWT_SECRET);
+            if (vPassword === user.password){
+                console.log("message")
+                res.send()
+            }
+        }catch({error})
+        {
+            next({error});
+        } 
+  }*/
+        
+    
 
-    try{
-        const user = await getUserByUsername(username);
-
-        console.log(user);
-
-    }catch({name, message})
-    {
-        next({name, message});
-    }
+    
 })
 
 // GET /api/users/me
 router.get('/me',(req, res, next) =>{
+    const auth = req.header('Authorization')
+    console.log(auth)
 
 })
 
