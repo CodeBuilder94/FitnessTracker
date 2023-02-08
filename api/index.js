@@ -25,6 +25,15 @@ const routineActivitiesRouter = require('./routineActivities');
 const { setRandomFallback } = require('bcryptjs');
 router.use('/routine_activities', routineActivitiesRouter);
 
+router.use((error, req, res, next) => {
+    res.send({
+        error: "Got an error",
+        name:error.name,
+        message: error.message
+    })
+})
+
+
 router.use((req, res, next) =>{
     res.status(404);
     res.send({message:"Error 404! Page not found."});

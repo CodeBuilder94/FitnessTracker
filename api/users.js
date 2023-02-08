@@ -18,8 +18,7 @@ router.post("/register", async(req, res, next) =>{
         {
             next({
                 name:'UserExistsError',
-                message:"This username already exists",
-                error:"UserExistsError"
+                message: `User ${username} is already taken.`,
             });
         }
         else{
@@ -28,7 +27,6 @@ router.post("/register", async(req, res, next) =>{
                 next({
                     name:'PasswordLengthError',
                     message:"Password Too Short!",
-                    error:"PasswordLengthError"
                 })
             }
             else{
@@ -62,6 +60,7 @@ router.post("/register", async(req, res, next) =>{
 // POST /api/users/login
 router.post('/login', async (req, res, next) =>{
     const {username, password} = req.body;
+    const prefix = 'Bearer ';
 
     try{
         const user = await getUserByUsername(username);
