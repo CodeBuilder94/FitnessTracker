@@ -63,39 +63,73 @@ router.post("/register", async(req, res, next) =>{
 // POST /api/users/login
 router.post('/login', async (req, res, next) =>{
     const {username, password} = req.body;
-   const prefix = 'Bearer ';
-   const auth = req.header('Authorization');
-    //console.log(req.header('Authorization'))
-  /*if(!auth) {
-    next()
-  }
-  else if(auth.startsWith(prefix)){
-     const token = auth.slice(prefix.length);
-     console.log(token)
-        try{
-            const user = await getUserByUsername(username);
-            const hashedPassword = bcrypt.hashSync(password, SALT_COUNT);
-            const vPassword = jwt.verify(token, JWT_SECRET);
-            if (vPassword === user.password){
-                console.log("message")
-                res.send()
-            }
-        }catch({error})
-        {
-            next({error});
-        } 
-  }*/
-        
+       
+   if(!username || !password) 
+   {
+    next({
+        name:"MissingCredntialsError",
+        message: "Please supply both a username and a password"
+    });
+   }
     
+   try{
+    const user = await getUserByUsername(username);
+    
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
-    
+    if(user && passwordMatch)
+    {
+        delete user.password;
+
+        const token = jwt.sign({id: user.id, username:user.username}, JWT_SECRET);
+
+        res.send({
+            token: token,
+            user: user,
+            message: "you're logged in!"
+        });
+    }else{
+        next({
+            name: "IncorrectCredentialsError",
+            message: 'Username or password is incorrect'
+        });
+    }
+
+   }catch(error)
+   {
+        next(error);
+   }
 })
 
 // GET /api/users/me
 router.get('/me',(req, res, next) =>{
+    const prefix = 'Bearer ';
     const auth = req.header('Authorization')
-    console.log(auth)
+    //console.log(auth)
+    if(!auth)
+    {
+        next();
 
+    }else if (auth.startsWith(prefix))
+    {
+        const token =auth.slice(prefix.length);
+        
+        const data = jwt.verify(token, JWT_SECRET);
+        console.log(data);
+        //validate the token to send data
+        /*if(){
+
+        }
+        else{
+
+        }*/
+        res.send({
+            id: data.id,
+            username: data.username,
+            iat: data.iat,
+            exp: data.exp
+        });
+    }
 })
 
 // GET /api/users/:username/routines
