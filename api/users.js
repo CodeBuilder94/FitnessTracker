@@ -3,7 +3,7 @@ const express = require("express");
 require("dotenv").config();
 const bcrypt = require('bcryptjs')
 const SALT_COUNT = 10
-const { getUserByUsername, createUser, getUserById } = require("../db");
+const { getUserByUsername, createUser, getAllRoutinesByUser,getPublicRoutinesByUser } = require("../db");
 const router = express.Router();
 
 const jwt = require('jsonwebtoken');
@@ -112,29 +112,52 @@ router.get('/me',(req, res, next) =>{
 
     }else if (auth.startsWith(prefix))
     {
+      try{
         const token =auth.slice(prefix.length);
         
         const data = jwt.verify(token, JWT_SECRET);
-        console.log(data);
+        //console.log(data);
         //validate the token to send data
-        /*if(){
-
+        if(data)
+        {
+            res.send({
+                id: data.id,
+                username: data.username,
+                iat: data.iat,
+                exp: data.exp
+            });
+        }else{
+            next();
         }
-        else{
+            
+            
 
-        }*/
-        res.send({
-            id: data.id,
-            username: data.username,
-            iat: data.iat,
-            exp: data.exp
-        });
+      }catch(error)
+      {
+        next(error);
+      }
+        
+        
     }
 })
 
 // GET /api/users/:username/routines
-router.get('/:username/routines', (req, res, next) =>{
+router.get('/:username/routines', async (req, res, next) =>{
+    const {username} = req.params;
+    
+    try{
+        //need to figure out if a user is logged in or not.
+        
+        //const routines = await getAllRoutinesByUser({username});
+        const routines = await getPublicRoutinesByUser({username});
+        //console.log(routines);
+        res.send(routines);
 
+    }catch(error)
+    {
+        next(error);
+    }
+    
 })
 
 module.exports = router;

@@ -72,7 +72,7 @@ async function attachActivitiesToRoutines(routines) {
     return routinesToReturn;
   }
   
-  console.log(routines);
+  
   try{
     const {rows:[activities]} =await client.query(`
       SELECT activities.*, routine_activities, routine_activities.count, routine_activities.id
