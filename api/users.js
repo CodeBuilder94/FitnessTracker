@@ -7,7 +7,7 @@ const { getUserByUsername, createUser, getAllRoutinesByUser,getPublicRoutinesByU
 const router = express.Router();
 
 const jwt = require('jsonwebtoken');
-const { off } = require("../app");
+//const { } = require("../app");
 const {JWT_SECRET} = process.env;
 
 // POST /api/users/register
@@ -142,9 +142,13 @@ router.get('/me',(req, res, next) =>{
 // GET /api/users/:username/routines
 router.get('/:username/routines', async (req, res, next) =>{
     const {username} = req.params;
-    const token = req.header('Authorization');
-    console.log(token);
+    const prefix = 'Bearer ';
+    const auth = req.header('Authorization')
+    //console.log(token);
     try{
+        const token =auth.slice(prefix.length);
+        const user = jwt.verify(token, JWT_SECRET);
+        console.log(user.username);
         //need to figure out if a user is logged in or not.
         if(token)
         {
