@@ -105,53 +105,61 @@ router.post('/login', async (req, res, next) =>{
 router.get('/me',(req, res, next) =>{
     const prefix = 'Bearer ';
     const auth = req.header('Authorization')
-    //console.log(auth)
-    if(!auth)
-    {
-        next();
-
-    }else if (auth.startsWith(prefix))
-    {
+   
       try{
         const token =auth.slice(prefix.length);
         
-        const data = jwt.verify(token, JWT_SECRET);
-        //console.log(data);
-        //validate the token to send data
-        if(data)
+        if(!token)
         {
-            res.send({
-                id: data.id,
-                username: data.username,
-                iat: data.iat,
-                exp: data.exp
-            });
-        }else{
-            next();
+            throw "no token";
         }
+        //validate the token to send data
+        const data = jwt.verify(token, JWT_SECRET);
+              
+        
+        res.send({
+            id: data.id,
+            username: data.username,
+            iat: data.iat,
+            exp: data.exp
+        });
+        
             
             
 
       }catch(error)
       {
-        next(error);
+        res.status(401);
+        next({
+            error:error,
+            name:"No token",
+            message:"You must be logged in to perform this action"
+        });
       }
         
-        
-    }
 })
 
 // GET /api/users/:username/routines
 router.get('/:username/routines', async (req, res, next) =>{
     const {username} = req.params;
-    
+    const token = req.header('Authorization');
+    console.log(token);
     try{
         //need to figure out if a user is logged in or not.
+        if(token)
+        {
+            console.log("test");
+            const routines = await getAllRoutinesByUser({username});
+            res.send(routines);
+        }
+        else{
+            
+            const routines = await getPublicRoutinesByUser({username});
+            res.send(routines);
+        }
         
-        //const routines = await getAllRoutinesByUser({username});
-        const routines = await getPublicRoutinesByUser({username});
         //console.log(routines);
-        res.send(routines);
+        //res.send(routines);
 
     }catch(error)
     {
