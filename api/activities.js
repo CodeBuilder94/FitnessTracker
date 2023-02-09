@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {getAllActivities, getPublicRoutinesByActivity} = require('../db')
+const {JWT_SECRET} = process.env;
 
 // GET /api/activities/:activityId/routines
 router.get('/:activityId/routines', async(req, res, next) =>
@@ -11,7 +12,7 @@ router.get('/:activityId/routines', async(req, res, next) =>
 
     try{
         res.send(routines);
-        //need to finish the error handeling.
+        
     }catch(error)
     {
         next(error);
@@ -33,7 +34,14 @@ router.get('/', async(req, res, next) =>{
 })
 
 // POST /api/activities
-
+router.post('/', async(req, res, next) =>{
+    const prefix = 'Bearer ';
+    const auth = req.header('Authorization');
+    
+    const token =auth.slice(prefix.length);
+    const user = jwt.verify(token, JWT_SECRET);
+    console.log(user);
+})
 // PATCH /api/activities/:activityId
 
 

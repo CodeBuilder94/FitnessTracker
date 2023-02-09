@@ -148,9 +148,9 @@ router.get('/:username/routines', async (req, res, next) =>{
     try{
         const token =auth.slice(prefix.length);
         const user = jwt.verify(token, JWT_SECRET);
-        console.log(user.username);
-        //need to figure out if a user is logged in or not.
-        if(token)
+       
+        //Figure out if a user is logged in or not.
+        if(user.username === username)
         {
             console.log("test");
             const routines = await getAllRoutinesByUser({username});
