@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {getAllActivities, getPublicRoutinesByActivity} = require('../db')
 const {JWT_SECRET} = process.env;
+const jwt = require('jsonwebtoken')
 
 // GET /api/activities/:activityId/routines
 router.get('/:activityId/routines', async(req, res, next) =>
@@ -40,7 +41,13 @@ router.post('/', async(req, res, next) =>{
     
     const token =auth.slice(prefix.length);
     const user = jwt.verify(token, JWT_SECRET);
-    console.log(user);
+    console.log(req.body);
+
+    try{
+
+    }catch(error){
+        next(error);
+    }
 })
 // PATCH /api/activities/:activityId
 
