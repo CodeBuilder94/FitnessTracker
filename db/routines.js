@@ -138,6 +138,7 @@ const publicActivityRoutines = allPublicRoutines.filter((routine) =>{
 })
 
   //console.log(JSON.stringify(publicActivityRoutines,null, 2));
+  //console.log(publicActivityRoutines);
   return publicActivityRoutines;
 
 }
