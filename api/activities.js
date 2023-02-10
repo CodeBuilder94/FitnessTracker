@@ -12,7 +12,7 @@ router.get('/:activityId/routines', async(req, res, next) =>
 
     try{
         const routines = await getPublicRoutinesByActivity({activityId});
-console.log(routines)
+//console.log(routines)
         if(routines.length > 0){
         res.send(routines);
         }
@@ -79,6 +79,9 @@ router.post('/', async(req, res, next) =>{
     }
 })
 // PATCH /api/activities/:activityId
-
+router.patch('/:activityId', async(req, res, next) =>{
+    const {activityId} = req.params;
+    const {name, description}=req.body;
+})
 
 module.exports = router;
