@@ -7,13 +7,11 @@ const jwt = require('jsonwebtoken')
 // GET /api/activities/:activityId/routines
 router.get('/:activityId/routines', async(req, res, next) =>
 {
-    const {activityId} =req.params;
     
-
     try{
-        const routines = await getPublicRoutinesByActivity({id:activityId});
-    console.log(routines)
-        if(routines.length > 0){
+        const routines = await getPublicRoutinesByActivity({id:req.params.activityId});
+    
+        if(routines.length >0){
             
             res.send(routines);
             
@@ -22,7 +20,7 @@ router.get('/:activityId/routines', async(req, res, next) =>
             
             next({
                 name:"Does not exist",
-                message: `Activity ${activityId} not found`
+                message: `Activity ${req.params.activityId} not found`
             })
         }
     }catch(error)

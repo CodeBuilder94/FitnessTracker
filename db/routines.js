@@ -129,16 +129,27 @@ async function getPublicRoutinesByUser({ username }) {
 
 async function getPublicRoutinesByActivity({ id }) {
 const allPublicRoutines = await getAllPublicRoutines();
-//console.log(allPublicRoutines);
+
 const publicActivityRoutines = allPublicRoutines.filter((routine) =>{
   
-  return routine.activities.length > 1 ? routine.activities.filter((activity) =>{
-    return activity.id ? id : null;
-  }):null
+ 
+  let containsActivity = false;
+  for (let i = 0; i < routine.activities.length; i++) {
+        
+    if(routine.activities[i].id == id)
+    {
+      containsActivity = true;
+      break;
+    }
+  }
+  
+  
+    
+  return containsActivity;
+  
 })
 
-  //console.log(JSON.stringify(publicActivityRoutines,null, 2));
-  //console.log(publicActivityRoutines);
+  
   return publicActivityRoutines;
 
 }
