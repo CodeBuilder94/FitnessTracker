@@ -11,10 +11,12 @@ router.get('/:activityId/routines', async(req, res, next) =>
     
 
     try{
-        const routines = await getPublicRoutinesByActivity({activityId});
-//console.log(routines)
+        const routines = await getPublicRoutinesByActivity({id:activityId});
+    console.log(routines)
         if(routines.length > 0){
-        res.send(routines);
+            
+            res.send(routines);
+            
         }
         else{
             
