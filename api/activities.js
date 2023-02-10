@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getAllActivities, getPublicRoutinesByActivity} = require('../db')
+const {getAllActivities, getPublicRoutinesByActivity, createActivity} = require('../db')
 const {JWT_SECRET} = process.env;
 const jwt = require('jsonwebtoken')
 
@@ -38,12 +38,32 @@ router.get('/', async(req, res, next) =>{
 router.post('/', async(req, res, next) =>{
     const prefix = 'Bearer ';
     const auth = req.header('Authorization');
-    
-    const token =auth.slice(prefix.length);
-    const user = jwt.verify(token, JWT_SECRET);
-    console.log(req.body);
 
     try{
+        const token =auth.slice(prefix.length);
+        const user = jwt.verify(token, JWT_SECRET);
+        const {name, description}=req.body;
+
+        if(user)
+        {
+            const allActivities = await getAllActivities();
+            
+            const exists = allActivities.find(element => element.name === name);
+            
+            if(exists)
+            {
+                next({
+                    name:"ActivityExists",
+                    message:`An activity with name ${name} already exists`
+                })
+            }
+            else{
+                const newActivity = await createActivity({name, description});
+
+                res.send(newActivity);
+            }
+
+        }
 
     }catch(error){
         next(error);
