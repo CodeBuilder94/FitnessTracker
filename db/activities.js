@@ -95,7 +95,7 @@ async function attachActivitiesToRoutines(routines) {
 
 async function updateActivity({ id, ...fields }) {
 
-
+//console.log(fields);
 const setString = Object.keys(fields).map((key, index) =>{
   return `${key} = $${index +1}`
 }
@@ -111,7 +111,6 @@ const setString = Object.keys(fields).map((key, index) =>{
   RETURNING *
   ;`, Object.values(fields))
 
-  
   return activity;
 
 
