@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getAllActivities, getPublicRoutinesByActivity, createActivity} = require('../db')
+const {getAllActivities, getPublicRoutinesByActivity, createActivity, getActivityById, getActivityByName, updateActivity} = require('../db')
 const {JWT_SECRET} = process.env;
 const jwt = require('jsonwebtoken')
 
@@ -80,8 +80,53 @@ router.post('/', async(req, res, next) =>{
 })
 // PATCH /api/activities/:activityId
 router.patch('/:activityId', async(req, res, next) =>{
+    const prefix = 'Bearer ';
+    const auth = req.header('Authorization');
+
     const {activityId} = req.params;
     const {name, description}=req.body;
+    try{
+        const token =auth.slice(prefix.length);
+        const user = jwt.verify(token, JWT_SECRET);
+        if(user){
+            const activity = await getActivityById(activityId)
+            if(activity){
+                const activityAlreadyExists = await getActivityByName (name)
+                
+                if(activityAlreadyExists){
+                    next({
+                        name: "Name already used",
+                        message:  `An activity with name ${name} already exists`
+                    })
+                } 
+                const fields = {}
+                if(name){
+                    fields.name = name
+                }
+                if(description){
+                    fields.description = description
+                }
+                    const updatedActivity = await updateActivity ({id: activityId, name: name, description: description})
+                    console.log(updatedActivity)
+
+                    res.send (updatedActivity)
+                
+            }
+            else{
+                next({
+                    name: "Activity does not exist",
+                    message: `Activity ${activityId} not found`
+                })
+            }
+        }
+
+        
+
+    
+    }catch(error){
+        next(error);
+    }
+    
 })
 
 module.exports = router;
