@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getAllRoutines, createRoutine} = require('../db')
+const {getAllRoutines, createRoutine, getRoutineById, updateRoutine} = require('../db')
 const {JWT_SECRET} = process.env;
 const jwt = require('jsonwebtoken')
 
@@ -36,19 +36,52 @@ router.post('/', async (req, res, next) =>{
             })
         }
 
-        
-      
-            
-            
-        
-
     }catch(error)
     {
         next(error);
     }
 })
 // PATCH /api/routines/:routineId
+router.patch('/:routineId', async (req, res, next) =>{
 
+    try{
+        const prefix = 'Bearer ';
+        const auth = req.header('Authorization');
+
+        if(auth)
+        {
+            const token = auth.slice(prefix.length);
+            const curentUser = jwt.verify(token, JWT_SECRET);
+
+            const routineId = req.params;
+            const {isPublic, name, goal} = req.body;
+
+            const routine = await getRoutineById(routineId.routineId);
+            
+            if(curentUser.id === routine.creatorId)
+            {
+                const updatedRoutine = await updateRoutine({id:routineId.routineId, isPublic:isPublic, name:name, goal:goal})
+                res.send(updatedRoutine);
+            }else{
+                res.status(403);
+                next({
+                    name:"NotOwner",
+                    message:`User ${curentUser.username} is not allowed to update ${routine.name}`
+                })
+            }
+
+        }else{
+            next({
+                name:"NeedLogin",
+                message:"You must be logged in to perform this action"
+            })
+        }
+
+    }catch(error)
+    {
+
+    }
+})
 // DELETE /api/routines/:routineId
 
 // POST /api/routines/:routineId/activities
