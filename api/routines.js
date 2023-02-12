@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getAllRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine} = require('../db')
+const {getAllRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine, addActivityToRoutine, getRoutineActivitiesByRoutine} = require('../db')
 const {JWT_SECRET} = process.env;
 const jwt = require('jsonwebtoken')
 
@@ -100,7 +100,7 @@ router.delete('/:routineId', async (req,res, next) => {
             if(curentUser.id === creatorId)
             {
                 const deletedRoutine = await destroyRoutine(routineId.routineId);
-                console.log(deletedRoutine);
+                
                 res.send(deletedRoutine);
             }
             else{
@@ -127,5 +127,37 @@ router.delete('/:routineId', async (req,res, next) => {
     }
 })
 // POST /api/routines/:routineId/activities
+router.post('/:routineId/activities', async (req, res, next) =>{
+    try{
+        const {routineId} = req.params;
+        const activity = req.body;
+//{routineId, activityId, count, duration}
+        //console.log(activity);
 
+        const routineCheck = await getRoutineActivitiesByRoutine({id:routineId});
+        
+        for(let i=0; i< routineCheck.length; i++)
+        {
+            if(activity.activityId === routineCheck[i].activityId)
+            {
+                next({
+                    name:"ActivityDulplicate",
+                    message:`Activity ID ${activity.activityId} already exists in Routine ID ${routineId}`
+                })
+
+            }
+        }
+        
+        const returnedRoutine = await addActivityToRoutine({routineId: routineId, activityId: activity.activityId, 
+        count: activity.count, duration: activity.duration})
+        res.send(returnedRoutine);
+    
+            
+            
+        
+
+    }catch(error){
+        next(error);
+    }
+})
 module.exports = router;
