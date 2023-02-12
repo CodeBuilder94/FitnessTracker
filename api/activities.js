@@ -107,7 +107,7 @@ router.patch('/:activityId', async(req, res, next) =>{
                     fields.description = description
                 }
                     const updatedActivity = await updateActivity ({id: activityId, name: name, description: description})
-                    console.log(updatedActivity)
+                    
 
                     res.send (updatedActivity)
                 
